@@ -1,15 +1,19 @@
 import React from 'react'
-import HookMqtt from './components/Hook/'
-// Hook or Class
-// import ClassMqtt from './components/Class/'
 import './App.css'
+import HookMqtt from './Hook/Mqtt'
+
+import { NivelController } from './components/NivelController'
+import { ControllerComponent } from './components/Controller'
+import { NivelTanqueChart } from './components/NivelTanqueChart'
 
 function App() {
   return (
     <div className="App">
-      <HookMqtt />
-      {/* Hook or Class */}
-      {/* <ClassMqtt /> */}
+      <HookMqtt>
+        <NivelController />
+        <ControllerComponent/>
+        <NivelTanqueChart />
+      </HookMqtt>
     </div>
   )
 }

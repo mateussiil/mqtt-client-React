@@ -1,9 +1,9 @@
 import React, { createContext, useEffect, useState } from 'react'
 import Connection from './Connection'
-import Publisher from './Publisher'
 import Subscriber from './Subscriber'
 import Receiver from './Receiver'
 import mqtt from 'mqtt'
+import { useCallback } from 'react'
 
 export const QosOption = createContext([])
 // https://github.com/mqttjs/MQTT.js#qos
@@ -22,11 +22,23 @@ const qosOption = [
   },
 ]
 
-const HookMqtt = () => {
+export const topicHdesejada = 'h_desejada'
+export const topicHatual = 'h_atual'
+export const topicContrador = 'controlador'
+
+export const topics = [topicContrador, topicHatual, topicHdesejada]
+
+const HookMqtt = ({ children }) => {
   const [client, setClient] = useState(null)
   const [isSubed, setIsSub] = useState(false)
   const [payload, setPayload] = useState({})
   const [connectStatus, setConnectStatus] = useState('Connect')
+
+  // topic & QoS for MQTT subscribing
+  const record = {
+    topic: topics,
+    qos: 0,
+  }
 
   const mqttConnect = (host, mqttOption) => {
     setConnectStatus('Connecting')
@@ -88,7 +100,7 @@ const HookMqtt = () => {
 
   // publish message
   // https://github.com/mqttjs/MQTT.js#mqttclientpublishtopic-message-options-callback
-  const mqttPublish = (context) => {
+  const mqttPublish = useCallback((context) => {
     if (client) {
       // topic, QoS & payload for publishing message
       const { topic, qos, payload } = context
@@ -98,7 +110,7 @@ const HookMqtt = () => {
         }
       })
     }
-  }
+  },[client])
 
   const mqttSub = (subscription) => {
     if (client) {
@@ -140,11 +152,18 @@ const HookMqtt = () => {
         disconnect={mqttDisconnect}
         connectBtn={connectStatus}
       />
-      <QosOption.Provider value={qosOption}>
-        <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
-        <Publisher publish={mqttPublish} />
+      <QosOption.Provider value={{
+          qosOption,
+          sub: mqttSub,
+          unSub: mqttUnSub,
+          record: record,
+          showUnsub: isSubed,
+          publish: mqttPublish,
+          payload
+        }}>
+        <Subscriber />
+        {children}
       </QosOption.Provider>
-      <Receiver payload={payload} />
     </>
   )
 }

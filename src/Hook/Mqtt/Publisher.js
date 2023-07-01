@@ -2,15 +2,9 @@ import React, { useContext } from 'react';
 import { Card, Form, Input, Row, Col, Button, Select } from 'antd';
 import { QosOption } from './index'
 
-const Publisher = ({ publish }) => {
+const Publisher = () => {
   const [form] = Form.useForm();
-  const qosOptions = useContext(QosOption);
-
-  // topic, QoS for publishing message
-  const record = {
-    topic: 'testtopic/react',
-    qos: 0,
-  };
+  const { qosOptions, record, publish } = useContext(QosOption)
 
   const onFinish = (values) => {
     publish(values)
