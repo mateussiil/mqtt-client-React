@@ -27,6 +27,20 @@ ChartJS.register(
   Legend
 );
 
+const getTime = () => {
+  const dataAtual = new Date();
+
+  // Obtém as horas, minutos, segundos e milissegundos
+  const horas = dataAtual.getHours();
+  const minutos = dataAtual.getMinutes();
+  const segundos = dataAtual.getSeconds();
+  const milissegundos = dataAtual.getMilliseconds();
+
+  const resultado = `${horas}:${minutos}:${segundos}.${milissegundos}`;
+
+  return resultado
+}
+
 const customChartData = (chartData, message) => {
   const newLabels = [...chartData.labels];
   const newData = [...chartData.datasets[0].data];
@@ -35,13 +49,13 @@ const customChartData = (chartData, message) => {
     newLabels.shift();
   }
 
-  newLabels.push(message.time);
+  newLabels.push(getTime());
 
   if (newData.length > 10) {
     newData.shift();
   }
 
-  newData.push(message[topicHatual]);
+  newData.push(message);
 
   return {
     ...chartData,
